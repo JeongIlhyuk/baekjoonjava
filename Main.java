@@ -4,67 +4,56 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 class SegmentTree{
-    private final int INF = Integer.MAX_VALUE;
-    private int n;
     private int[] tree;
     private final int[] arr;
 
     public SegmentTree(final int[] arr){
         this.arr = arr;
-        n = arr.length;
-        tree = new int[4*n];
-        build(1,0,n-1);
+        tree = new int[4*arr.length];
+        build(1,0,arr.length-1);
     }
 
     private void build(final int node,final int start,final int end){
         if(start==end){
-            tree[node]=start;
+            tree[node]=arr[start];
             return;
         }
         final int mid = (start+end)/2;
         build(2*node,start,mid);
         build(2*node+1,mid+1,end);
 
-        if(arr[tree[2*node+1]]<arr[tree[2*node]])
-            tree[node] = tree[2*node+1];
-        else
-            tree[node] = tree[2*node];
+        tree[node] = tree[2*node]*tree[2*node+1];
     }
     public int query(final int left,final int right){
-        return query(left,right,1,0,n-1)+1;
+        return query(left,right,1,0,arr.length-1);
     }
     private int query(final int left,final int right, final int node, int start, int end){
-        if(right<start||end<left)return -1;
+        if(right<start||end<left)return 1;
         if(left<=start&&end<=right)return tree[node];
 
         final int mid = (start+end)/2;
         final int leftResult = query(left,right,2*node,start,mid);
-        final int leftVal = leftResult==-1?INF:arr[leftResult];
         final int rightResult = query(left,right,2*node+1,mid+1,end);
-        final int righttVal = rightResult==-1?INF:arr[rightResult];
         
-        return righttVal<leftVal?rightResult:leftResult;
+        return leftResult*rightResult;
     }
 
     public void update(final int idx,final int val){
         arr[idx] = val;
-        update(idx,val,1,0,n-1);
+        update(idx,1,0,arr.length-1);
     }
-    private void update(final int idx,final int val,int node, int start,int end){
+    private void update(final int idx, final int node, int start,int end){
         if(start==end){
-            tree[node]=start;
+            tree[node]=arr[start];
             return;
         }
         final int mid = (start+end)/2;
         if(idx<=mid)
-            update(idx,val,2*node,start,mid);
+            update(idx,2*node,start,mid);
         else
-            update(idx,val,2*node+1,mid+1,end);
+            update(idx,2*node+1,mid+1,end);
 
-        if(arr[tree[2*node+1]]<arr[tree[2*node]])
-            tree[node] = tree[2*node+1];
-        else
-            tree[node] = tree[2*node];
+        tree[node] = tree[2*node]*tree[2*node+1];
     }
 }
 
@@ -75,26 +64,50 @@ public class Main{
         StringTokenizer st;
         StringBuilder sb = new StringBuilder();
 
-        final int n = Integer.parseInt(br.readLine());
-        int[] sequence = new int[n];
-        st = new StringTokenizer(br.readLine());
-        for(int i=0;i<n;i++){
-            sequence[i] = Integer.parseInt(st.nextToken());
-        }
+        String line;
+        while((line = br.readLine())!=null){
+            st = new StringTokenizer(line);
+            final int n = Integer.parseInt(st.nextToken());
+            final int k = Integer.parseInt(st.nextToken());
 
-        SegmentTree tree = new SegmentTree(sequence);
+            int[] sequence = new int[n];
 
-        final int m = Integer.parseInt(br.readLine());
-        for(int i=0;i<m;i++){
             st = new StringTokenizer(br.readLine());
-            final int cmd = Integer.parseInt(st.nextToken());
-            final int a = Integer.parseInt(st.nextToken());
-            final int b = Integer.parseInt(st.nextToken());
-            if(cmd==1){
-                tree.update(a-1,b);
-            }else{
-                sb.append(tree.query(a-1,b-1)).append('\n');
+            for(int i=0;i<n;i++){
+                final int num = Integer.parseInt(st.nextToken());
+                if(num>0)
+                    sequence[i] = 1;
+                else if(num<0)
+                    sequence[i] = -1;
+                else
+                    sequence[i] = 0;
             }
+
+            SegmentTree tree = new SegmentTree(sequence);
+
+            for(int i=0;i<k;i++){
+                st = new StringTokenizer(br.readLine());
+                final String cmd = st.nextToken();
+                final int a = Integer.parseInt(st.nextToken());
+                final int b = Integer.parseInt(st.nextToken());
+                if(cmd.equals("C")){
+                    if(b>0)
+                        tree.update(a-1,1);
+                    else if(b<0)
+                        tree.update(a-1,-1);
+                    else
+                        tree.update(a-1,0);
+                }else{
+                    final int result = tree.query(a-1,b-1);
+                    if(result>0)
+                        sb.append('+');
+                    else if(result<0)
+                        sb.append('-');
+                    else
+                        sb.append(0);
+                }
+            }
+            sb.append('\n');
         }
 
         System.out.print(sb);
