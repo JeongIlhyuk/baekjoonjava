@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 class SegmentTree{
-    private final int INF = Integer.MAX_VALUE;
     private int n;
     private long[] tree;
-    private final int[] arr;
+    private final long[] arr;
 
-    public SegmentTree(final int[] arr){
+    public SegmentTree(final long[] arr){
         this.arr = arr;
         n = arr.length;
         tree = new long[4*n];
@@ -73,10 +72,10 @@ public class Main{
         final int n = Integer.parseInt(st.nextToken());
         final int m = Integer.parseInt(st.nextToken());
         final int k = Integer.parseInt(st.nextToken());
-        int[] sequence = new int[n];
+        long[] sequence = new long[n];
 
         for(int i=0;i<n;i++){
-            sequence[i] = Integer.parseInt(br.readLine());
+            sequence[i] = Long.parseLong(br.readLine());
         }
 
         SegmentTree tree = new SegmentTree(sequence);
@@ -90,7 +89,7 @@ public class Main{
             }else{
                 final int b = Integer.parseInt(st.nextToken());
                 final int c = Integer.parseInt(st.nextToken());
-                sb.append(tree.query(b,c)).append('\n');
+                sb.append(tree.query(b-1,c-1)).append('\n');
             }
         }
 
