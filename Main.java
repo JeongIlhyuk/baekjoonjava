@@ -3,6 +3,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 class Edge{
     private final int start;
@@ -32,59 +33,57 @@ public class Main{
 
         final int INF = Integer.MAX_VALUE;
 
-        final int tc = Integer.parseInt(br.readLine());
-        for(int i=0;i<tc;i++){
+        st = new StringTokenizer(br.readLine());
+        final int n = Integer.parseInt(st.nextToken());
+        final int m = Integer.parseInt(st.nextToken());
+
+        int[] distance = new int[n];
+        final Edge[] edgeArr = new Edge[m];
+        int[] route = new int[n+1];
+
+        Arrays.fill(distance,-INF);
+        distance[0]=0;
+
+        for(int j=0;j<m;j++){
             st = new StringTokenizer(br.readLine());
-            final int n = Integer.parseInt(st.nextToken());
-            final int m = Integer.parseInt(st.nextToken());
-            final int w = Integer.parseInt(st.nextToken());
+            final int s = Integer.parseInt(st.nextToken());
+            final int e = Integer.parseInt(st.nextToken());
+            final int t = Integer.parseInt(st.nextToken());
+            edgeArr[j] = new Edge(s,e,t);
+        }
 
-            int[] distance = new int[n];
-            final Edge[] edgeArr = new Edge[2*m+w];
-
-            for(int j=0;j<2*m;j+=2){
-                st = new StringTokenizer(br.readLine());
-                final int s = Integer.parseInt(st.nextToken());
-                final int e = Integer.parseInt(st.nextToken());
-                final int t = Integer.parseInt(st.nextToken());
-                edgeArr[j] = new Edge(s,e,t);
-                edgeArr[j+1] = new Edge(e,s,t);
-            }
-
-            for(int j=2*m;j<2*m+w;j++){
-                st = new StringTokenizer(br.readLine());
-                final int s = Integer.parseInt(st.nextToken());
-                final int e = Integer.parseInt(st.nextToken());
-                final int t = -Integer.parseInt(st.nextToken());
-                edgeArr[j] = new Edge(s,e,t);
-            }
-
-            for(int j=0;j<n-1;j++){
-                for(final Edge edge:edgeArr){
-                    final int s = edge.getStart();
-                    final int e = edge.getEnd();
-                    final int t = edge.getTime();
-    
-                    if(distance[s-1]!=INF &&distance[s-1]+t<distance[e-1]){
-                        distance[e-1]=distance[s-1]+t;
-                    }
-                }
-            }
-
-            boolean tag = false;
+        for(int j=0;j<n-1;j++){
             for(final Edge edge:edgeArr){
                 final int s = edge.getStart();
                 final int e = edge.getEnd();
                 final int t = edge.getTime();
 
-                if(distance[s-1]!=INF &&distance[s-1]+t<distance[e-1]){
-                    sb.append("YES\n");
-                    tag = true;
-                    break;
+                if(distance[s-1]!=-INF &&distance[s-1]+t>distance[e-1]){
+                    distance[e-1]=distance[s-1]+t;
+                    route[e]=s;
                 }
             }
-            if(!tag)sb.append("NO\n");
         }
+
+        for(final Edge edge:edgeArr){
+            final int s = edge.getStart();
+            final int e = edge.getEnd();
+            final int t = edge.getTime();
+
+            if(distance[s-1]!=-INF &&distance[s-1]+t>distance[e-1]){
+                System.out.println("-1");
+                return;
+            }
+        }
+
+        ArrayList<Integer> result = new ArrayList<>(n);
+        result.add(n);
+        for(int i=n;i>1;i--){
+            result.add(route[i]);
+        }
+        for(int i=n-1;i>=0;i--)
+            sb.append(result.get(i)).append(' ');
+        sb.append('\n');
 
         System.out.print(sb);
         return;
