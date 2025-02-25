@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.LinkedList;
 
 class Edge{
     private final int start;
@@ -65,14 +67,36 @@ public class Main{
             }
         }
 
+        boolean[] isCycle = new boolean[n];
         for(final Edge edge:edgeArr){
             final int s = edge.getStart();
             final int e = edge.getEnd();
             final int t = edge.getTime();
 
             if(distance[s-1]!=-INF &&distance[s-1]+t>distance[e-1]){
-                System.out.println("-1");
-                return;
+                isCycle[s-1]=true;
+            }
+        }
+        
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visited = new boolean[n];
+        for(int i=0;i<n;i++){
+            if(isCycle[i]){
+                queue.offer(i);
+                visited[i]=true;
+            }
+        }
+        while(!queue.isEmpty()){
+            final int curr = queue.poll();
+            for(final var edge:edgeArr){
+                if(edge.getStart()-1==curr){
+                    if(edge.getEnd()==n){
+                        System.out.println(-1);
+                        return;
+                    }
+                    visited[edge.getEnd()-1]=true;
+                    queue.offer(edge.getEnd()-1);
+                }
             }
         }
 
