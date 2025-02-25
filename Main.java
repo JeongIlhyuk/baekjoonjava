@@ -108,14 +108,13 @@ public class Main{
 
         ArrayList<Integer> result = new ArrayList<>(n);
         result.add(n);
-        int i=n,size=1;
-        while(true){
+        int i=n;
+        while(route[i]!=1){
             result.add(route[i]);
-            size++;
-            if(route[i]==1)break;
-            i--;
+            i=route[i];
         }
-        for(int j=size-1;j>=0;j--)
+        result.add(1);
+        for(int j=result.size() - 1;j>=0;j--)
             sb.append(result.get(j)).append(' ');
         sb.append('\n');
 
