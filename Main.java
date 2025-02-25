@@ -38,7 +38,7 @@ class SegmentTree{
         final int leftResult = query(left,right,2*node,start,mid);
         final int rightResult = query(left,right,2*node+1,mid+1,end);
         
-        return tree[node] = (leftResult%MOD)*(rightResult%MOD)%MOD;
+        return (leftResult%MOD)*(rightResult%MOD)%MOD;
     }
     public void update(final int idx,final int val){
         arr[idx]=val;
