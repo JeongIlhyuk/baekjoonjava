@@ -42,7 +42,7 @@ public class Main{
             int[] distance = new int[n];
             final Edge[] edgeArr = new Edge[2*m+w];
 
-            Arrays.fill(distance,INF);
+            // Arrays.fill(distance,INF);
             distance[0] = 0;
 
             for(int j=0;j<2*m;j+=2){
@@ -58,7 +58,7 @@ public class Main{
                 st = new StringTokenizer(br.readLine());
                 final int s = Integer.parseInt(st.nextToken());
                 final int e = Integer.parseInt(st.nextToken());
-                final int t = Integer.parseInt(st.nextToken());
+                final int t = -Integer.parseInt(st.nextToken());
                 edgeArr[j] = new Edge(s,e,t);
             }
 
