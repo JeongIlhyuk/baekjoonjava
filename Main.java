@@ -42,11 +42,11 @@ class SegmentTree{
         return leftSum + rightSum;
     }
 
-    public void update(final int idx,final int val){
+    public void update(final int idx,final long val){
         arr[idx] = val;
         update(idx,val,1,0,n-1);
     }
-    private void update(final int idx,final int val,int node, int start,int end){
+    private void update(final int idx,final long val,int node, int start,int end){
         if(start==end){
             tree[node]=val;
             return;
@@ -84,7 +84,7 @@ public class Main{
             st = new StringTokenizer(br.readLine());
             if(Integer.parseInt(st.nextToken())==1){
                 final int b = Integer.parseInt(st.nextToken());
-                final int c = Integer.parseInt(st.nextToken());
+                final long c = Long.parseLong(st.nextToken());
                 tree.update(b-1,c);
             }else{
                 final int b = Integer.parseInt(st.nextToken());
