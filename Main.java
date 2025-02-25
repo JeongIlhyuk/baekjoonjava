@@ -70,24 +70,23 @@ public class Main{
 
         st = new StringTokenizer(br.readLine());
         final int n = Integer.parseInt(st.nextToken());
-        final int q = Integer.parseInt(st.nextToken());
+        final int m = Integer.parseInt(st.nextToken());
         int[] sequence = new int[n];
 
-        st = new StringTokenizer(br.readLine());
         for(int i=0;i<n;i++){
-            sequence[i] = Integer.parseInt(st.nextToken());
+            sequence[i] = 0;
         }
 
         SegmentTree tree = new SegmentTree(sequence);
 
-        for(int i=0;i<q;i++){
+        for(int i=0;i<m;i++){
             st = new StringTokenizer(br.readLine());
-            final int x = Integer.parseInt(st.nextToken());
-            final int y = Integer.parseInt(st.nextToken());
             final int a = Integer.parseInt(st.nextToken());
             final int b = Integer.parseInt(st.nextToken());
-            sb.append(tree.query(x-1,y-1)).append('\n');
-            tree.update(a-1,b);
+            final int c = Integer.parseInt(st.nextToken());
+            
+            if(a==0)sb.append(b<c?tree.query(b-1,c-1):tree.query(c-1,b-1)).append('\n');
+            else tree.update(b-1,c);
         }
 
         System.out.print(sb);
