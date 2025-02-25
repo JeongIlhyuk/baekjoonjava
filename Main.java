@@ -42,6 +42,9 @@ public class Main{
         int[] distance = new int[n];
         final Edge[] edgeArr = new Edge[m];
         int[] route = new int[n+1];
+        boolean[] isCycle = new boolean[n];
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visited = new boolean[n];
 
         Arrays.fill(distance,-INF);
         distance[0]=0;
@@ -66,8 +69,12 @@ public class Main{
                 }
             }
         }
+        if(distance[n-1]==-INF){
+            System.out.println(-1);
+            return;
+        }
 
-        boolean[] isCycle = new boolean[n];
+        
         for(final Edge edge:edgeArr){
             final int s = edge.getStart();
             final int e = edge.getEnd();
@@ -75,21 +82,20 @@ public class Main{
 
             if(distance[s-1]!=-INF &&distance[s-1]+t>distance[e-1]){
                 isCycle[s-1]=true;
+                isCycle[e-1]=true;
             }
         }
         
-        Queue<Integer> queue = new LinkedList<>();
-        boolean[] visited = new boolean[n];
-        for(int i=0;i<n;i++){
+        for(int i=0;i<n;i++)
             if(isCycle[i]){
                 queue.offer(i);
                 visited[i]=true;
             }
-        }
+
         while(!queue.isEmpty()){
             final int curr = queue.poll();
             for(final var edge:edgeArr){
-                if(edge.getStart()-1==curr){
+                if(edge.getStart()-1==curr && !visited[edge.getEnd()-1]){
                     if(edge.getEnd()==n){
                         System.out.println(-1);
                         return;
@@ -102,11 +108,15 @@ public class Main{
 
         ArrayList<Integer> result = new ArrayList<>(n);
         result.add(n);
-        for(int i=n;i>1;i--){
+        int i=n,size=1;
+        while(true){
             result.add(route[i]);
+            size++;
+            if(route[i]==1)break;
+            i--;
         }
-        for(int i=n-1;i>=0;i--)
-            sb.append(result.get(i)).append(' ');
+        for(int j=size-1;j>=0;j--)
+            sb.append(result.get(j)).append(' ');
         sb.append('\n');
 
         System.out.print(sb);
