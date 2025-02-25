@@ -2,61 +2,27 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.Arrays;
 
-class SegmentTree{
-    private int[] tree;
-    private final int[] arr;
-
-    public SegmentTree(final int[] arr){
-        this.arr = arr;
-        tree = new int[4*arr.length];
-        build(1,0,arr.length-1);
+class Edge{
+    private final int start;
+    private final int end;
+    private final int time;
+    public Edge(int start,int end,int time){
+        this.start = start;
+        this.end = end;
+        this.time = time;
     }
-
-    private void build(final int node,final int start,final int end){
-        if(start==end){
-            tree[node]=arr[start]%2==0?1:0;
-            return;
-        }
-        final int mid = (start+end)/2;
-        build(2*node,start,mid);
-        build(2*node+1,mid+1,end);
-
-        tree[node] = tree[2*node]+tree[2*node+1];
+    public int getStart(){
+        return start;
     }
-    public int query(final int left,final int right){
-        return query(left,right,1,0,arr.length-1);
+    public int getEnd(){
+        return end;
     }
-    private int query(final int left,final int right, final int node, int start, int end){
-        if(right<start||end<left)return 0;
-        if(left<=start&&end<=right)return tree[node];
-
-        final int mid = (start+end)/2;
-        final int leftResult = query(left,right,2*node,start,mid);
-        final int rightResult = query(left,right,2*node+1,mid+1,end);
-        
-        return leftResult+rightResult;
-    }
-
-    public void update(final int idx,final int val){
-        arr[idx] = val;
-        update(idx,1,0,arr.length-1);
-    }
-    private void update(final int idx, final int node, int start,int end){
-        if(start==end){
-            tree[node]=arr[start]%2==0?1:0;
-            return;
-        }
-        final int mid = (start+end)/2;
-        if(idx<=mid)
-            update(idx,2*node,start,mid);
-        else
-            update(idx,2*node+1,mid+1,end);
-
-        tree[node] = tree[2*node]+tree[2*node+1];
+    public int getTime(){
+        return time;
     }
 }
-
 
 public class Main{
     public static void main(String[] args)throws IOException{
@@ -64,28 +30,63 @@ public class Main{
         StringTokenizer st;
         StringBuilder sb = new StringBuilder();
 
-        final int n = Integer.parseInt(br.readLine());
+        final int INF = Integer.MAX_VALUE;
 
-        int[] sequence = new int[n];
-        st = new StringTokenizer(br.readLine());
-        for(int i=0;i<n;i++)
-            sequence[i]=Integer.parseInt(st.nextToken());
-
-        SegmentTree tree = new SegmentTree(sequence);
-
-        final int m = Integer.parseInt(br.readLine());
-        for(int i=0;i<m;i++){
+        final int tc = Integer.parseInt(br.readLine());
+        for(int i=0;i<tc;i++){
             st = new StringTokenizer(br.readLine());
-            final int cmd = Integer.parseInt(st.nextToken());
-            final int a = Integer.parseInt(st.nextToken());
-            final int b = Integer.parseInt(st.nextToken());
-            if(cmd==1){
-                tree.update(a-1,b);
-            }else if(cmd==2){
-                sb.append(tree.query(a-1,b-1)).append('\n');
-            }else{
-                sb.append(b-a+1-tree.query(a-1,b-1)).append('\n');
+            final int n = Integer.parseInt(st.nextToken());
+            final int m = Integer.parseInt(st.nextToken());
+            final int w = Integer.parseInt(st.nextToken());
+
+            int[] distance = new int[n];
+            final Edge[] edgeArr = new Edge[2*m+w];
+
+            Arrays.fill(distance,INF);
+            distance[0] = 0;
+
+            for(int j=0;j<2*m;j+=2){
+                st = new StringTokenizer(br.readLine());
+                final int s = Integer.parseInt(st.nextToken());
+                final int e = Integer.parseInt(st.nextToken());
+                final int t = Integer.parseInt(st.nextToken());
+                edgeArr[j] = new Edge(s,e,t);
+                edgeArr[j+1] = new Edge(e,s,t);
             }
+
+            for(int j=2*m;j<2*m+w;j++){
+                st = new StringTokenizer(br.readLine());
+                final int s = Integer.parseInt(st.nextToken());
+                final int e = Integer.parseInt(st.nextToken());
+                final int t = Integer.parseInt(st.nextToken());
+                edgeArr[j] = new Edge(s,e,t);
+            }
+
+            for(int j=0;j<n-1;j++){
+                for(final Edge edge:edgeArr){
+                    final int s = edge.getStart();
+                    final int e = edge.getEnd();
+                    final int t = edge.getTime();
+    
+                    if(distance[s-1]!=INF &&distance[s-1]+t<distance[e-1]){
+                        distance[e-1]=distance[s-1]+t;
+                    }
+                }
+            }
+
+            boolean tag = false;
+            for(final Edge edge:edgeArr){
+                final int s = edge.getStart();
+                final int e = edge.getEnd();
+                final int t = edge.getTime();
+
+                if(distance[s-1]!=INF &&distance[s-1]+t<distance[e-1]){
+                    sb.append("YES\n");
+                    tag = true;
+                    break;
+                }
+            }
+            if(!tag)sb.append("NO\n");
         }
 
         System.out.print(sb);
