@@ -6,13 +6,13 @@ import java.util.StringTokenizer;
 class SegmentTree{
     private final int MOD = 1000000007;
     private final int n;
-    private int[] tree;
+    private long[] tree;
     private final int[] arr;
 
     public SegmentTree(final int[] arr){
         this.arr = arr;
         n = arr.length;
-        tree = new int[4*n];
+        tree = new long[4*n];
         build(1,0,n-1);
     }
 
@@ -25,20 +25,20 @@ class SegmentTree{
         build(2*node,start,mid);
         build(2*node+1,mid+1,end);
 
-        tree[node] = (tree[2*node]%MOD)*(tree[2*node+1]%MOD)%MOD;
+        tree[node] = tree[2*node]*tree[2*node+1]%MOD;
     }
-    public int query(final int left,final int right){
+    public long query(final int left,final int right){
         return query(left,right,1,0,n-1);
     }
-    private int query(final int left,final int right,final int node, int start,int end){
+    private long query(final int left,final int right,final int node, int start,int end){
         if(right<start||end<left)return 1;
         if(left<=start&&end<=right)return tree[node];
 
         final int mid= (start+end)/2;
-        final int leftResult = query(left,right,2*node,start,mid);
-        final int rightResult = query(left,right,2*node+1,mid+1,end);
+        final long leftResult = query(left,right,2*node,start,mid);
+        final long rightResult = query(left,right,2*node+1,mid+1,end);
         
-        return (leftResult%MOD)*(rightResult%MOD)%MOD;
+        return leftResult*rightResult%MOD;
     }
     public void update(final int idx,final int val){
         arr[idx]=val;
@@ -53,7 +53,7 @@ class SegmentTree{
         final int mid= (start+end)/2;
         if(idx<=mid)update(idx,2*node,start,mid);
         else update(idx,2*node+1,mid+1,end);
-        tree[node] = (tree[2*node]%MOD)*(tree[2*node+1]%MOD)%MOD;
+        tree[node] = tree[2*node]*tree[2*node+1]%MOD;
     }
 }
 
