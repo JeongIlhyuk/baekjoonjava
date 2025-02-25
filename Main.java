@@ -3,65 +3,40 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.LinkedList;
-
-class Edge{
-    private final int start;
-    private final int end;
-    private final int time;
-    public Edge(int start,int end,int time){
-        this.start = start;
-        this.end = end;
-        this.time = time;
-    }
-    public int getStart(){
-        return start;
-    }
-    public int getEnd(){
-        return end;
-    }
-    public int getTime(){
-        return time;
-    }
-}
 
 public class Main{
+    static StringBuilder sb = new StringBuilder();
+    static int n;
     public static void main(String[] args)throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
-        StringBuilder sb = new StringBuilder();
 
-        final int INF = Integer.MAX_VALUE;
+        int INF = 100000;
 
         st = new StringTokenizer(br.readLine());
-        final int n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
         final int m = Integer.parseInt(st.nextToken());
 
         int[] distance = new int[n];
-        final Edge[] edgeArr = new Edge[m];
+        final int[][] edgeArr = new int[m][3];
         int[] route = new int[n+1];
         boolean[] isCycle = new boolean[n];
-        Queue<Integer> queue = new LinkedList<>();
-        boolean[] visited = new boolean[n];
 
         Arrays.fill(distance,-INF);
         distance[0]=0;
 
         for(int j=0;j<m;j++){
             st = new StringTokenizer(br.readLine());
-            final int s = Integer.parseInt(st.nextToken());
-            final int e = Integer.parseInt(st.nextToken());
-            final int t = Integer.parseInt(st.nextToken());
-            edgeArr[j] = new Edge(s,e,t);
+            edgeArr[j][0] = Integer.parseInt(st.nextToken());
+            edgeArr[j][1] = Integer.parseInt(st.nextToken());
+            edgeArr[j][2] = Integer.parseInt(st.nextToken());
         }
 
         for(int j=0;j<n-1;j++){
-            for(final Edge edge:edgeArr){
-                final int s = edge.getStart();
-                final int e = edge.getEnd();
-                final int t = edge.getTime();
+            for(final int[] edge:edgeArr){
+                final int s = edge[0];
+                final int e = edge[1];
+                final int t = edge[2];
 
                 if(distance[s-1]!=-INF &&distance[s-1]+t>distance[e-1]){
                     distance[e-1]=distance[s-1]+t;
@@ -69,56 +44,47 @@ public class Main{
                 }
             }
         }
-        if(distance[n-1]==-INF){
-            System.out.println(-1);
-            return;
-        }
-
         
-        for(final Edge edge:edgeArr){
-            final int s = edge.getStart();
-            final int e = edge.getEnd();
-            final int t = edge.getTime();
+        for(final int[] edge:edgeArr){
+            final int s = edge[0];
+            final int e = edge[1];
+            final int t = edge[2];
 
             if(distance[s-1]!=-INF &&distance[s-1]+t>distance[e-1]){
                 isCycle[s-1]=true;
-                isCycle[e-1]=true;
             }
         }
         
         for(int i=0;i<n;i++)
             if(isCycle[i]){
-                queue.offer(i);
-                visited[i]=true;
+                boolean[] visited = new boolean[n];
+                dfs(visited,edgeArr,i);
             }
 
-        while(!queue.isEmpty()){
-            final int curr = queue.poll();
-            for(final var edge:edgeArr){
-                if(edge.getStart()-1==curr && !visited[edge.getEnd()-1]){
-                    if(edge.getEnd()==n){
-                        System.out.println(-1);
-                        return;
-                    }
-                    visited[edge.getEnd()-1]=true;
-                    queue.offer(edge.getEnd()-1);
+        printResult(route,n);
+
+        System.out.println(sb);
+        return;
+    }
+    static void printResult(final int[] route,final int idx){
+        if(idx==1){
+            sb.append("1 ");
+            return;
+        }
+        printResult(route,route[idx]);
+        sb.append(idx).append(' ');
+    }
+    static void dfs(boolean[] visited,final int[][] edgeArr,final int vertex){
+        visited[vertex]=true;
+        for(final int[] edge:edgeArr){
+            if(edge[0]-1==vertex&&!visited[edge[1]-1]){
+                if(edge[1]==n){
+                    System.out.println(-1);
+                    System.exit(0);
                 }
+                dfs(visited,edgeArr,edge[1]-1);
             }
         }
-
-        ArrayList<Integer> result = new ArrayList<>(n);
-        result.add(n);
-        int i=n;
-        while(route[i]!=1){
-            result.add(route[i]);
-            i=route[i];
-        }
-        result.add(1);
-        for(int j=result.size() - 1;j>=0;j--)
-            sb.append(result.get(j)).append(' ');
-        sb.append('\n');
-
-        System.out.print(sb);
         return;
     }
 }
