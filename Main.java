@@ -83,24 +83,6 @@ class MinSegmentTree{
             
             return Math.max(leftResult,rightResult);
         }
-
-    public void update(final int idx,final int val){
-        arr[idx] = val;
-        update(idx,val,1,0,n-1);
-    }
-    private void update(final int idx,final int val,int node, int start,int end){
-        if(start==end){
-            tree[node]=val;
-            return;
-        }
-        final int mid = (start+end)/2;
-        if(idx<=mid)
-            update(idx,val,2*node,start,mid);
-        else
-            update(idx,val,2*node+1,mid+1,end);
-        
-        tree[node] = Math.max(tree[2*node],tree[2*node+1]);
-    }
 }
 
 
@@ -112,6 +94,7 @@ public class Main{
 
         st = new StringTokenizer(br.readLine());
         final int n = Integer.parseInt(st.nextToken());
+        final int m = Integer.parseInt(st.nextToken());
         int[] sequence = new int[n];
         
         for(int i=0;i<n;i++){
@@ -120,7 +103,6 @@ public class Main{
         MinSegmentTree minTree = new MinSegmentTree(sequence);
         MaxSegmentTree maxTree = new MaxSegmentTree(sequence);
         
-        final int m = Integer.parseInt(st.nextToken());
         for(int i=0;i<m;i++){
             st = new StringTokenizer(br.readLine());
             final int b = Integer.parseInt(st.nextToken());
