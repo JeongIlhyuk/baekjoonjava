@@ -87,12 +87,12 @@ public class Main{
     }
     static void dfs(boolean[] vist,Edge[] edges,final int v){
         vist[v] = true;
+        if(v==end){
+            System.out.println("Gee");
+            System.exit(0);
+        }
         for(final var edge:edges){
             if(edge.s==v && !vist[edge.e]){
-                if(edge.e==end){
-                    System.out.println("Gee");
-                    System.exit(0);
-                }
                 dfs(vist,edges,edge.e);
             }
         }
