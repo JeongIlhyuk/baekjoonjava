@@ -63,7 +63,6 @@ public class Main{
             final int p = edge.p;
             if(dist[s]!=-INF &&dist[s]-p+profit[e]>dist[e]){
                 isCycle[s]=true;
-                isCycle[e]=true;
             }
         }
         for(int i=0;i<n;i++){
