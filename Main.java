@@ -21,9 +21,9 @@ public class Main{
         end = Integer.parseInt(st.nextToken());
         final int m = Integer.parseInt(st.nextToken());
 
-        final int[] dist = new int[n];
+        final long[] dist = new long[n];
+        final long[] profit = new long[n];
         final Edge[] edges = new Edge[m];
-        final int[] profit = new int[n];
         final boolean[] isCycle = new boolean[n];
         
 
@@ -46,7 +46,7 @@ public class Main{
             for(final var edge:edges){
                 final int s = edge.s;
                 final int e = edge.e;
-                final int p = edge.p;
+                final long p = edge.p;
                 if(dist[s]!=-INF && dist[s]-p+profit[e]>dist[e]){
                     dist[e] = dist[s]-p+profit[e];
                 }
@@ -60,7 +60,7 @@ public class Main{
         for(final var edge:edges){
             final int s = edge.s;
             final int e = edge.e;
-            final int p = edge.p;
+            final long p = edge.p;
             if(dist[s]!=-INF &&dist[s]-p+profit[e]>dist[e]){
                 isCycle[s]=true;
             }
